@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+version: "2"
+language: "en-US"
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "main"
+
+  # Exclude generated/binary files from review
+  path_filters:
+    - "!app/build/**"
+    - "!build/**"
+    - "!.gradle/**"
+    - "!gradle/wrapper/**"
+    - "!**/*.webp"
+    - "!**/*.png"
+
+  path_instructions:
+    - path: "**/*.kt"
+      instructions: |
+        Android Automotive OS (AAOS) project, Kotlin, API 29–36, AGP 9.0.1.
+        AGP 9.0.1 manages Kotlin compilation internally — the kotlin-android
+        plugin is intentionally not applied.
+        Review for: Android lifecycle correctness, AAOS-specific patterns,
+        CarUxRestrictions compliance (all game interactions must be gated when
+        the vehicle is not in park), proper resource cleanup, and idiomatic
+        Kotlin. Flag deprecated API usage.
+
+    - path: "app/src/main/AndroidManifest.xml"
+      instructions: |
+        This app targets Android Automotive OS for the Play Store for Automotive.
+        Verify: android.hardware.type.automotive uses-feature is present and
+        required=true, activity flags are appropriate for automotive, no
+        permissions or features that would fail Play Store for Automotive review.
+
+    - path: "app/src/main/res/layout/**/*.xml"
+      instructions: |
+        Layout targets AAOS automotive_1024p_landscape (1024x600dp), landscape
+        only. Review for: interactive touch targets >= 72dp, no small or
+        hard-to-tap elements, landscape-first composition. Flag anything that
+        would be unusable while wearing driving gloves or on a vehicle display.
+
+    - path: "**/*.gradle.kts"
+      instructions: |
+        AGP 9.0.1 with Gradle 9.1.0. Flag deprecated configurations or APIs.
+        Note: AGP 9.x emits a "incompatible with Gradle 10" deprecation warning
+        that is expected and non-blocking — do not flag this.
+
+    - path: ".github/workflows/**/*.yml"
+      instructions: |
+        CI pipeline: ktlintCheck → detekt → lintDebug → testDebugUnitTest →
+        assembleDebug. Flag any steps that are redundant with the Lefthook
+        pre-commit/pre-push hooks, or any missing coverage gaps.
+
+chat:
+  auto_reply: true
