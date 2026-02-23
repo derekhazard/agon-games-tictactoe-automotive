@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Agon Games Tictactoe"
+rootProject.name = "Laminar Flow Games Tictactoe"
 include(":app")

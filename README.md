@@ -1,11 +1,11 @@
-# Agon Games — Tic-Tac-Toe for Android Automotive OS
+# Laminar Flow Games — Tic-Tac-Toe for Android Automotive OS
 
-![CI](https://github.com/derekhazard/agon-games-tictactoe-automotive/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/derekhazard/laminar-flow-games-tictactoe-automotive/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)
 ![API](https://img.shields.io/badge/API-29%2B-brightgreen.svg)
 
 A native Android Automotive OS (AAOS) Tic-Tac-Toe game targeting API 34 (Android 14).
-Part of the [Agon Games](https://github.com/derekhazard) series — open source games built for
+Part of the [Laminar Flow Games](https://github.com/derekhazard) series — open source games built for
 Android Automotive OS.
 
 ---
@@ -38,8 +38,8 @@ Android Automotive OS.
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/derekhazard/agon-games-tictactoe-automotive.git
-cd agon-games-tictactoe-automotive
+git clone https://github.com/derekhazard/laminar-flow-games-tictactoe-automotive.git
+cd laminar-flow-games-tictactoe-automotive
 ```
 
 ### 2. Open in Android Studio
@@ -90,7 +90,7 @@ To auto-fix formatting violations before committing:
 ```
 app/src/main/
 ├── AndroidManifest.xml        # App declaration and AAOS feature flags
-├── java/com/agongames/tictactoe/
+├── java/com/laminarflowgames/tictactoe/
 │   ├── ui/                    # Activities and UI components
 │   └── game/                  # Game logic (board, rules, AI)
 └── res/
