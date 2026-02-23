@@ -33,7 +33,8 @@ compileOptions {
 }
 ```
 
-AGP 9.x propagates this target to the Kotlin compiler automatically.
+AGP 9.x propagates this target to the Kotlin compiler automatically
+([Migrate to built-in Kotlin](https://developer.android.com/build/migrate-to-built-in-kotlin)).
 
 ## Consequences
 
