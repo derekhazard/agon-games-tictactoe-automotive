@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Agon Games Tictactoe</string>
+    <string name="app_name">Laminar Flow Games Tictactoe</string>
     <string name="btn_new_game">New Game</string>
     <string name="cell_empty_description">Empty cell</string>
 </resources>

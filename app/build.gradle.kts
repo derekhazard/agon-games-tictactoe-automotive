@@ -6,13 +6,13 @@ plugins {
 }
 
 android {
-    namespace = "com.agongames.tictactoe"
+    namespace = "com.laminarflowgames.tictactoe"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.agongames.tictactoe"
+        applicationId = "com.laminarflowgames.tictactoe"
         minSdk = 29
         targetSdk = 36
         versionCode = 1
@@ -53,7 +53,7 @@ tasks.register<JacocoCoverageVerification>("jacocoGameCoverageVerification") {
     dependsOn("testDebugUnitTest")
     violationRules {
         rule {
-            includes = listOf("com.agongames.tictactoe.game.*")
+            includes = listOf("com.laminarflowgames.tictactoe.game.*")
             limit {
                 minimum = "0.80".toBigDecimal()
             }

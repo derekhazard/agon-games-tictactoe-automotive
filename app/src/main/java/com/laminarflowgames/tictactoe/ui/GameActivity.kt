@@ -1,8 +1,8 @@
-package com.agongames.tictactoe.ui
+package com.laminarflowgames.tictactoe.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.agongames.tictactoe.R
+import com.laminarflowgames.tictactoe.R
 
 /**
  * Entry point [Activity][androidx.appcompat.app.AppCompatActivity] for the Tic-Tac-Toe game.

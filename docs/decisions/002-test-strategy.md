@@ -32,7 +32,7 @@ classes, data classes, objects, and companion objects without requiring `open`
 modifiers or a Mockito Kotlin extension.
 
 **JaCoCo** (AGP built-in) enforces a minimum of **80% instruction coverage**
-on the `com.agongames.tictactoe.game.*` package. This threshold applies only
+on the `com.laminarflowgames.tictactoe.game.*` package. This threshold applies only
 to game logic, not to Android Activity/UI code, which is impractical to unit
 test without an instrumentation harness.
 

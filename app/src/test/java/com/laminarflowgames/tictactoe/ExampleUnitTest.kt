@@ -1,4 +1,4 @@
-package com.agongames.tictactoe
+package com.laminarflowgames.tictactoe
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
