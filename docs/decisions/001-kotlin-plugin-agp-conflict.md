@@ -10,7 +10,7 @@ internally when `com.android.application` is applied. Explicitly applying
 `org.jetbrains.kotlin.android` alongside AGP 9.0.1 triggers a fatal build
 error at configuration time:
 
-```
+```text
 Cannot add extension with name 'kotlin', as there is an extension already
 registered with that name.
 ```
