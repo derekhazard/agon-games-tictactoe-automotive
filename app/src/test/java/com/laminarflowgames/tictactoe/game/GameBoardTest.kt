@@ -20,7 +20,7 @@ class GameBoardTest {
     fun `initial board has all cells empty`() {
         for (row in 0..2) {
             for (col in 0..2) {
-                assertNull(board.cellAt(row, col))
+                assertNull("Cell ($row, $col) should be null initially", board.cellAt(row, col))
             }
         }
     }
@@ -84,7 +84,7 @@ class GameBoardTest {
         board.reset()
         for (row in 0..2) {
             for (col in 0..2) {
-                assertNull(board.cellAt(row, col))
+                assertNull("Cell ($row, $col) should be null after reset", board.cellAt(row, col))
             }
         }
     }

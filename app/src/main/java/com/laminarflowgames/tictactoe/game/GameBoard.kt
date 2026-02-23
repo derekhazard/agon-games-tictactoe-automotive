@@ -11,13 +11,17 @@ class GameBoard {
 
     private val cells = arrayOfNulls<Player>(9)
 
+    private fun requireValidCoords(row: Int, col: Int) {
+        require(row in 0..2 && col in 0..2) { "row and col must be in 0..2, got ($row, $col)" }
+    }
+
     /**
      * Returns the [Player] occupying [row]/[col], or null if the cell is empty.
      *
      * @throws IllegalArgumentException if [row] or [col] is outside 0..2.
      */
     fun cellAt(row: Int, col: Int): Player? {
-        require(row in 0..2 && col in 0..2) { "row and col must be in 0..2, got ($row, $col)" }
+        requireValidCoords(row, col)
         return cells[row * 3 + col]
     }
 
@@ -28,7 +32,7 @@ class GameBoard {
      * @throws IllegalArgumentException if [row] or [col] is outside 0..2.
      */
     fun makeMove(row: Int, col: Int, player: Player): Boolean {
-        require(row in 0..2 && col in 0..2) { "row and col must be in 0..2, got ($row, $col)" }
+        requireValidCoords(row, col)
         if (cells[row * 3 + col] != null) return false
         cells[row * 3 + col] = player
         return true

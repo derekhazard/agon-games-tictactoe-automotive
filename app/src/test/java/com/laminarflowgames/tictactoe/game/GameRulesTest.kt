@@ -112,17 +112,42 @@ class GameRulesTest {
         // X O X
         // X X O
         // O X O  — no three-in-a-row for either player
-        board.makeMove(0, 0, Player.X); board.makeMove(0, 1, Player.O); board.makeMove(0, 2, Player.X)
-        board.makeMove(1, 0, Player.X); board.makeMove(1, 1, Player.X); board.makeMove(1, 2, Player.O)
-        board.makeMove(2, 0, Player.O); board.makeMove(2, 1, Player.X); board.makeMove(2, 2, Player.O)
+        board.makeMove(0, 0, Player.X)
+        board.makeMove(0, 1, Player.O)
+        board.makeMove(0, 2, Player.X)
+
+        board.makeMove(1, 0, Player.X)
+        board.makeMove(1, 1, Player.X)
+        board.makeMove(1, 2, Player.O)
+
+        board.makeMove(2, 0, Player.O)
+        board.makeMove(2, 1, Player.X)
+        board.makeMove(2, 2, Player.O)
         assertTrue(GameRules.isDraw(board))
     }
 
     @Test
-    fun `isDraw returns false when winner exists`() {
+    fun `isDraw returns false when board is not full`() {
         board.makeMove(0, 0, Player.X)
         board.makeMove(0, 1, Player.X)
         board.makeMove(0, 2, Player.X)
+        assertFalse(GameRules.isDraw(board))
+    }
+
+    @Test
+    fun `isDraw returns false on full board with winner`() {
+        // X wins row 0; board is full — isFull() and checkWinner() both evaluated
+        board.makeMove(0, 0, Player.X)
+        board.makeMove(0, 1, Player.X)
+        board.makeMove(0, 2, Player.X)
+
+        board.makeMove(1, 0, Player.O)
+        board.makeMove(1, 1, Player.O)
+        board.makeMove(1, 2, Player.X)
+
+        board.makeMove(2, 0, Player.O)
+        board.makeMove(2, 1, Player.X)
+        board.makeMove(2, 2, Player.O)
         assertFalse(GameRules.isDraw(board))
     }
 
