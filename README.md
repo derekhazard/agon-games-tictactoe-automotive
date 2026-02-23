@@ -5,7 +5,7 @@
 ![API](https://img.shields.io/badge/API-29%2B-brightgreen.svg)
 
 A native Android Automotive OS (AAOS) Tic-Tac-Toe game targeting API 34 (Android 14).
-Part of the [Laminar Flow Games](https://github.com/derekhazard) series — open source games built for
+Part of the [Laminar Flow Games](https://github.com/derekhazard/laminar-flow-games-tictactoe-automotive) series — open source games built for
 Android Automotive OS.
 
 ---
