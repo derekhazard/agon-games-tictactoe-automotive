@@ -69,6 +69,7 @@ jobs:
         with:
           name: test-results
           path: app/build/test-results/testDebugUnitTest/
+          if-no-files-found: ignore
 
       - name: Upload coverage report
         if: always()
@@ -76,3 +77,4 @@ jobs:
         with:
           name: coverage-report
           path: app/build/reports/coverage/test/debug/
+          if-no-files-found: warn
