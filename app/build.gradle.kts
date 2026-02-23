@@ -50,6 +50,7 @@ detekt {
 // Enforce 80% instruction coverage on the game logic package.
 // Passes trivially until game/ classes exist; enforces once step 4 is merged.
 tasks.register<JacocoCoverageVerification>("jacocoGameCoverageVerification") {
+    dependsOn("testDebugUnitTest")
     violationRules {
         rule {
             includes = listOf("com.agongames.tictactoe.game.*")
