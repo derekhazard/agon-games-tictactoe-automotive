@@ -3,6 +3,7 @@ package com.laminarflowgames.tictactoe.game
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -108,8 +109,8 @@ class MinimaxTest {
     @Test
     fun `returns a valid cell on empty board`() {
         val (row, col) = Minimax.bestMove(board, Player.O)
-        assert(row in 0..2) { "row=$row out of range" }
-        assert(col in 0..2) { "col=$col out of range" }
+        assertTrue("row=$row out of range", row in 0..2)
+        assertTrue("col=$col out of range", col in 0..2)
         assertNull("bestMove must return an empty cell", board.cellAt(row, col))
     }
 
@@ -132,24 +133,24 @@ class MinimaxTest {
     @Test
     fun `cpu never loses when human plays top-left corner`() {
         simulateFullGame(humanFirstMove = 0 to 0)
-        assertNotEquals(Player.X, GameRules.checkWinner(board))
+        assertNotEquals("CPU should not lose when human opens at top-left", Player.X, GameRules.checkWinner(board))
     }
 
     @Test
     fun `cpu never loses when human plays top-right corner`() {
         simulateFullGame(humanFirstMove = 0 to 2)
-        assertNotEquals(Player.X, GameRules.checkWinner(board))
+        assertNotEquals("CPU should not lose when human opens at top-right", Player.X, GameRules.checkWinner(board))
     }
 
     @Test
     fun `cpu never loses when human plays center`() {
         simulateFullGame(humanFirstMove = 1 to 1)
-        assertNotEquals(Player.X, GameRules.checkWinner(board))
+        assertNotEquals("CPU should not lose when human opens at center", Player.X, GameRules.checkWinner(board))
     }
 
     /**
-     * Simulates a full game where X plays [humanFirstMove] then minimax plays for X,
-     * and minimax plays for O.  Both sides use minimax so the game must draw.
+     * Simulates a game where X plays a fixed [humanFirstMove] as the opening, then
+     * both sides use [Minimax.bestMove] for all remaining moves.
      * We then verify X did not win.
      */
     private fun simulateFullGame(humanFirstMove: Pair<Int, Int>) {

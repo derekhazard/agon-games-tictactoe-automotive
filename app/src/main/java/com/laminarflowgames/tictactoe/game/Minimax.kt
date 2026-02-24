@@ -23,6 +23,7 @@ object Minimax {
      */
     fun bestMove(board: GameBoard, cpuPlayer: Player): Pair<Int, Int> {
         require(!board.isFull()) { "bestMove requires at least one empty cell" }
+        require(GameRules.checkWinner(board) == null) { "bestMove called after a winner was declared" }
         var bestScore = Int.MIN_VALUE
         var bestRow = -1
         var bestCol = -1
