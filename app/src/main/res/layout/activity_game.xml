@@ -29,8 +29,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="22sp"
-            android:layout_marginBottom="48dp"
+            android:layout_marginBottom="24dp"
             tools:text="Player X's Turn" />
+
+        <RadioGroup
+            android:id="@+id/rg_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
+
+            <RadioButton
+                android:id="@+id/rb_two_player"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mode_two_player"
+                android:checked="true"
+                android:minHeight="72dp"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/rb_vs_cpu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mode_vs_cpu"
+                android:minHeight="72dp"
+                android:textSize="18sp" />
+
+        </RadioGroup>
 
         <Button
             android:id="@+id/btn_new_game"

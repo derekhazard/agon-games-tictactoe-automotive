@@ -7,7 +7,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class GameBoardTest {
+internal class GameBoardTest {
 
     private lateinit var board: GameBoard
 
@@ -95,5 +95,23 @@ class GameBoardTest {
         board.reset()
         assertTrue(board.makeMove(0, 0, Player.O))
         assertEquals(Player.O, board.cellAt(0, 0))
+    }
+
+    @Test
+    fun `clearCell makes an occupied cell empty`() {
+        board.makeMove(1, 2, Player.X)
+        board.clearCell(1, 2)
+        assertNull("cell (1,2) should be null after clearCell", board.cellAt(1, 2))
+    }
+
+    @Test
+    fun `clearCell on already-empty cell leaves it empty`() {
+        board.clearCell(0, 0)
+        assertNull("cell (0,0) should remain null after clearCell on empty cell", board.cellAt(0, 0))
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `clearCell on out-of-bounds throws IllegalArgumentException`() {
+        board.clearCell(3, 0)
     }
 }

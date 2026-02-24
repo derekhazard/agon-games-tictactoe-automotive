@@ -43,4 +43,10 @@ class GameBoard {
 
     /** Clears all cells, returning the board to its initial empty state. */
     fun reset() = cells.fill(null)
+
+    /** Clears [row]/[col] back to empty. For use by [Minimax] backtracking only. */
+    internal fun clearCell(row: Int, col: Int) {
+        requireValidCoords(row, col)
+        cells[row * 3 + col] = null
+    }
 }
