@@ -40,6 +40,7 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
+    useLibrary("android.car")
 }
 
 detekt {
