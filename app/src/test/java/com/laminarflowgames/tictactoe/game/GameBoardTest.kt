@@ -96,4 +96,16 @@ class GameBoardTest {
         assertTrue(board.makeMove(0, 0, Player.O))
         assertEquals(Player.O, board.cellAt(0, 0))
     }
+
+    @Test
+    fun `clearCell makes an occupied cell empty`() {
+        board.makeMove(1, 2, Player.X)
+        board.clearCell(1, 2)
+        assertNull(board.cellAt(1, 2))
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `clearCell on out-of-bounds throws IllegalArgumentException`() {
+        board.clearCell(3, 0)
+    }
 }

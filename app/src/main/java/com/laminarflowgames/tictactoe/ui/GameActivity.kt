@@ -7,18 +7,20 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Button
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.laminarflowgames.tictactoe.R
 import com.laminarflowgames.tictactoe.game.GameBoard
 import com.laminarflowgames.tictactoe.game.GameRules
+import com.laminarflowgames.tictactoe.game.Minimax
 import com.laminarflowgames.tictactoe.game.Player
 import com.laminarflowgames.tictactoe.game.opponent
 
 /**
  * Entry point [Activity][androidx.appcompat.app.AppCompatActivity] for the Tic-Tac-Toe game.
  *
- * Hosts the 3×3 game board and the info panel (turn status, New Game button).
+ * Hosts the 3×3 game board and the info panel (turn status, mode selector, New Game button).
  * Targets the AAOS `automotive_1024p_landscape` display (1024×600 dp).
  *
  * Board interaction is gated on two conditions:
@@ -27,8 +29,12 @@ import com.laminarflowgames.tictactoe.game.opponent
  *
  * Park-only enforcement is performed via [CarUxRestrictionsManager]. When
  * [CarUxRestrictions.isRequiresDistractionOptimization] returns true the board
- * cells are disabled; the New Game button remains enabled because it is a
- * single, low-distraction action.
+ * cells and mode radio buttons are disabled; the New Game button remains enabled
+ * because it is a single, low-distraction action.
+ *
+ * In [GameMode.VS_CPU] mode the human plays as X (always first mover) and the
+ * CPU plays as O. After each human move the CPU move is deferred one frame so
+ * the "CPU's turn…" status renders before minimax runs.
  */
 class GameActivity : AppCompatActivity() {
 
@@ -37,6 +43,8 @@ class GameActivity : AppCompatActivity() {
     private val board = GameBoard()
     private var currentPlayer = Player.X
     private var gameOver = false
+    private var gameMode = GameMode.TWO_PLAYER
+    private val cpuPlayer = Player.O
 
     @Volatile
     private var isDrivingRestricted = false
@@ -45,6 +53,7 @@ class GameActivity : AppCompatActivity() {
 
     private lateinit var tvStatus: TextView
     private lateinit var cells: Array<Array<Button>>
+    private lateinit var rgMode: RadioGroup
 
     // ── Car API ───────────────────────────────────────────────────────────────
 
@@ -72,14 +81,20 @@ class GameActivity : AppCompatActivity() {
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     /**
-     * Inflates the layout, wires board cells and the New Game button, starts
-     * [CarUxRestrictionsManager] monitoring, and sets the initial turn status.
+     * Inflates the layout, wires board cells, the mode selector, and the New
+     * Game button, starts [CarUxRestrictionsManager] monitoring, and sets the
+     * initial turn status.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
         tvStatus = findViewById(R.id.tv_status)
+        rgMode = findViewById(R.id.rg_mode)
         wireBoard()
+        rgMode.setOnCheckedChangeListener { _, checkedId ->
+            gameMode = if (checkedId == R.id.rb_vs_cpu) GameMode.VS_CPU else GameMode.TWO_PLAYER
+            startNewGame()
+        }
         findViewById<Button>(R.id.btn_new_game).setOnClickListener { startNewGame() }
         initCarUxRestrictions()
         updateStatus()
@@ -132,8 +147,21 @@ class GameActivity : AppCompatActivity() {
             }
             else -> {
                 currentPlayer = currentPlayer.opponent()
-                updateStatus()
+                if (gameMode == GameMode.VS_CPU && currentPlayer == cpuPlayer) {
+                    scheduleCpuMove()
+                } else {
+                    updateStatus()
+                }
             }
+        }
+    }
+
+    private fun scheduleCpuMove() {
+        tvStatus.text = getString(R.string.status_cpu_turn)
+        Handler(Looper.getMainLooper()).post {
+            if (gameOver || isDrivingRestricted) return@post
+            val (row, col) = Minimax.bestMove(board, cpuPlayer)
+            onCellClicked(row, col)
         }
     }
 
@@ -162,6 +190,10 @@ class GameActivity : AppCompatActivity() {
                 cells[row][col].isEnabled =
                     !gameOver && !isDrivingRestricted && board.cellAt(row, col) == null
             }
+        }
+        rgMode.isEnabled = !isDrivingRestricted
+        for (i in 0 until rgMode.childCount) {
+            rgMode.getChildAt(i).isEnabled = !isDrivingRestricted
         }
     }
 
