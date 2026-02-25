@@ -7,8 +7,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Button
-import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import com.laminarflowgames.tictactoe.R
 import com.laminarflowgames.tictactoe.game.GameBoard
@@ -20,7 +20,7 @@ import com.laminarflowgames.tictactoe.game.opponent
 /**
  * Entry point [Activity][androidx.appcompat.app.AppCompatActivity] for the Tic-Tac-Toe game.
  *
- * Hosts the 3×3 game board and the info panel (turn status, mode selector, New Game button).
+ * Hosts the 3×3 game board and the info panel (turn status, mode selector, Clear Board button).
  * Targets the AAOS `automotive_1024p_landscape` display (1024×600 dp).
  *
  * Board interaction is gated on three conditions:
@@ -30,13 +30,13 @@ import com.laminarflowgames.tictactoe.game.opponent
  *
  * Park-only enforcement is performed via [CarUxRestrictionsManager]. When
  * [CarUxRestrictions.isRequiresDistractionOptimization] returns true the board
- * cells and mode radio buttons are disabled; the New Game button remains enabled
- * because it is a single, low-distraction action.
+ * cells and the mode toggle are disabled; the Clear Board and Clear Score buttons
+ * remain enabled because they are single, low-distraction actions.
  *
  * In [GameMode.VS_CPU] mode the human plays as X (always first mover) and the
  * CPU plays as O. After each human move the CPU move is deferred one frame via
  * [mainHandler] so the "CPU's turn…" status renders before minimax runs. The
- * pending [cpuMoveRunnable] is cancelled in [startNewGame] and [onDestroy] to
+ * pending [cpuMoveRunnable] is cancelled in [clearBoard] and [onDestroy] to
  * prevent stale moves against a reset or destroyed Activity.
  */
 class GameActivity : AppCompatActivity() {
@@ -68,13 +68,14 @@ class GameActivity : AppCompatActivity() {
         val (row, col) = Minimax.bestMove(board, cpuPlayer)
         onCellClicked(row, col)
     }
+    private val autoClearBoardRunnable = Runnable { clearBoard() }
 
     // ── Views ─────────────────────────────────────────────────────────────────
 
     private lateinit var tvScore: TextView
     private lateinit var tvStatus: TextView
     private lateinit var cells: Array<Array<Button>>
-    private lateinit var rgMode: RadioGroup
+    private lateinit var toggleMode: ToggleButton
 
     // ── Car API ───────────────────────────────────────────────────────────────
 
@@ -102,8 +103,8 @@ class GameActivity : AppCompatActivity() {
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     /**
-     * Inflates the layout, wires board cells, the mode selector, and the New
-     * Game button, starts [CarUxRestrictionsManager] monitoring, and sets the
+     * Inflates the layout, wires board cells, the mode selector, and the Clear
+     * Board button, starts [CarUxRestrictionsManager] monitoring, and sets the
      * initial turn status.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,14 +112,14 @@ class GameActivity : AppCompatActivity() {
         setContentView(R.layout.activity_game)
         tvScore = findViewById(R.id.tv_score)
         tvStatus = findViewById(R.id.tv_status)
-        rgMode = findViewById(R.id.rg_mode)
+        toggleMode = findViewById(R.id.toggle_mode)
         wireBoard()
-        rgMode.setOnCheckedChangeListener { _, checkedId ->
-            gameMode = if (checkedId == R.id.rb_vs_cpu) GameMode.VS_CPU else GameMode.TWO_PLAYER
-            startNewGame()
+        toggleMode.setOnCheckedChangeListener { _, isChecked ->
+            gameMode = if (isChecked) GameMode.TWO_PLAYER else GameMode.VS_CPU
+            clearScore()
         }
-        findViewById<Button>(R.id.btn_new_game).setOnClickListener { startNewGame() }
-        findViewById<Button>(R.id.btn_new_round).setOnClickListener { startNewRound() }
+        findViewById<Button>(R.id.btn_new_game).setOnClickListener { clearBoard() }
+        findViewById<Button>(R.id.btn_new_round).setOnClickListener { clearScore() }
         initCarUxRestrictions()
         updateScore()
         updateStatus()
@@ -130,6 +131,7 @@ class GameActivity : AppCompatActivity() {
      */
     override fun onDestroy() {
         mainHandler.removeCallbacks(cpuMoveRunnable)
+        mainHandler.removeCallbacks(autoClearBoardRunnable)
         uxRestrictionsManager?.unregisterListener()
         car?.disconnect()
         super.onDestroy()
@@ -161,18 +163,12 @@ class GameActivity : AppCompatActivity() {
         val winner = GameRules.checkWinner(board)
         when {
             winner != null -> {
-                gameOver = true
                 if (winner == Player.X) winsX++ else winsO++
-                updateScore()
-                tvStatus.text = getString(R.string.status_winner, winner.name)
-                updateBoardEnabled()
+                finishRound(getString(R.string.status_winner, winner.name))
             }
             GameRules.isDraw(board) -> {
-                gameOver = true
                 draws++
-                updateScore()
-                tvStatus.text = getString(R.string.status_draw)
-                updateBoardEnabled()
+                finishRound(getString(R.string.status_draw))
             }
             else -> {
                 currentPlayer = currentPlayer.opponent()
@@ -183,6 +179,15 @@ class GameActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun finishRound(statusText: String) {
+        gameOver = true
+        updateScore()
+        tvStatus.text = statusText
+        updateBoardEnabled()
+        mainHandler.removeCallbacks(autoClearBoardRunnable)
+        mainHandler.postDelayed(autoClearBoardRunnable, AUTO_CLEAR_BOARD_DELAY_MS)
     }
 
     private fun scheduleCpuMove() {
@@ -218,10 +223,7 @@ class GameActivity : AppCompatActivity() {
                     !gameOver && !isDrivingRestricted && !isCpuThinking && board.cellAt(row, col) == null
             }
         }
-        rgMode.isEnabled = !isDrivingRestricted
-        for (i in 0 until rgMode.childCount) {
-            rgMode.getChildAt(i).isEnabled = !isDrivingRestricted
-        }
+        toggleMode.isEnabled = !isDrivingRestricted
     }
 
     private fun updateStatus() {
@@ -232,8 +234,9 @@ class GameActivity : AppCompatActivity() {
         tvScore.text = getString(R.string.score_display, winsX, draws, winsO)
     }
 
-    private fun startNewGame() {
+    private fun clearBoard() {
         mainHandler.removeCallbacks(cpuMoveRunnable)
+        mainHandler.removeCallbacks(autoClearBoardRunnable)
         isCpuThinking = false
         board.reset()
         currentPlayer = Player.X
@@ -243,12 +246,19 @@ class GameActivity : AppCompatActivity() {
         updateStatus()
     }
 
-    private fun startNewRound() {
+    private fun clearScore() {
         winsX = 0
         winsO = 0
         draws = 0
         updateScore()
-        startNewGame()
+        clearBoard()
+    }
+
+    // ── Constants ─────────────────────────────────────────────────────────────
+
+    /** Activity-scoped constants. */
+    companion object {
+        private const val AUTO_CLEAR_BOARD_DELAY_MS = 3_000L
     }
 
     // ── CarUxRestrictions ─────────────────────────────────────────────────────
