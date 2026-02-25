@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Laminar Flow Games Tictactoe</string>
-    <string name="btn_new_game">New Game</string>
+    <string name="btn_new_game">Clear Board</string>
     <string name="cell_empty_description">Empty cell</string>
     <string name="status_turn">Player %1$s\'s turn</string>
     <string name="status_winner">Player %1$s wins!</string>
@@ -8,8 +8,8 @@
     <string name="cell_desc_empty">Row %1$d, Column %2$d, empty</string>
     <string name="cell_desc_occupied">Row %1$d, Column %2$d, %3$s</string>
     <string name="mode_two_player">2 Player</string>
-    <string name="mode_single_player">Single Player</string>
+    <string name="mode_single_player">1 Player</string>
     <string name="status_cpu_turn">CPU\'s turn\u2026</string>
     <string name="score_display">X: %1$d  ·  Draws: %2$d  ·  O: %3$d</string>
-    <string name="btn_new_round">New Round</string>
+    <string name="btn_new_round">Clear Score</string>
 </resources>
