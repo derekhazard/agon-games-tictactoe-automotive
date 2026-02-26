@@ -234,22 +234,32 @@
 
     </LinearLayout>
 
-    <!-- ── Right column: logo upper half, score panel lower half ── -->
+    <!-- ── Right column: logo centre → row-0 centre, score centre → row-1 centre ── -->
+    <!--
+        Geometry (screen 600 dp tall):
+          Centre column gravity="center"; content height 559 dp → top offset 20.5 dp.
+          GridLayout top = 20.5 + title(22) + margin(12) = 54.5 dp.
+          Row-0 centre = 54.5 + padding(4) + margin(3) + half-cell(77.5) = 139 dp.
+          Row-1 centre = 139 + margin(3)+cell(155)+margin(3)+margin(3) = 300 dp (approx).
+
+          Logo SVG 160×65 dp → rendered height = 65 dp.
+          Logo marginTop = 139 − 65/2 = 107 dp  →  logo centre ≈ 139 dp ✓
+
+          Score panel ≈ 104 dp tall (title 22 + gap 8 + 3 rows ×22 + 2 gaps ×4).
+          Logo bottom = 107 + 65 = 172 dp.
+          Score marginTop = 300 − 104/2 − 172 = 76 dp  →  score centre ≈ 300 dp ✓
+    -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <!--
-            Logo floats in the upper half of the column, centered between the
-            top of the screen and the top of the score panel.
-        -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="107dp"
+            android:gravity="center_horizontal">
 
             <ImageView
                 android:layout_width="160dp"
@@ -260,15 +270,11 @@
 
         </LinearLayout>
 
-        <!--
-            Score panel sits in the lower half. Items inside are start-aligned
-            so the "Score" title and the label column share the same left edge.
-        -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp"
+            android:layout_marginTop="76dp"
             android:orientation="vertical"
             android:gravity="start">
 
