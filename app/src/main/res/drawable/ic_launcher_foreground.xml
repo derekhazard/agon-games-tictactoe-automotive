@@ -4,20 +4,20 @@
     main diagonal (top-left, centre, bottom-right).
 
     Sizing rationale:
-      The adaptive icon circle mask has radius 54 centred at (54,54) in the
-      108×108 viewport. For the board's four corners to just touch the inside
-      edge of that circle the board's half-diagonal must equal 54:
-        side = 54 × √2 ≈ 76dp
-      Board: (16,16) → (92,92) — corners are ~53.7dp from centre. ✓
+      The AAOS launcher clips the adaptive icon to the safe-zone circle:
+      radius 36 centred at (54,54) in the 108×108 viewport.
+      For the board's four corners to just touch that circle:
+        side = 36 × √2 ≈ 50.9 dp  →  board (29,29)→(79,79)
+        corner distance from centre = 25√2 ≈ 35.4 dp  ✓ inside radius 36
 
-    Grid (each cell ≈25–26dp):
-      columns/rows: 16  41  67  92
-    Grid dividers at x=41, x=67 (vertical) and y=41, y=67 (horizontal).
+    Grid (each cell ≈16–17 dp):
+      columns/rows: 29  46  62  79
+    Grid dividers at x=46, x=62 (vertical) and y=46, y=62 (horizontal).
 
-    X marks (5dp padding inside each cell):
-      cell (0,0)  16–41 / 16–41  →  arms (21,21)↔(36,36)  (36,21)↔(21,36)
-      cell (1,1)  41–67 / 41–67  →  arms (46,46)↔(62,62)  (62,46)↔(46,62)
-      cell (2,2)  67–92 / 67–92  →  arms (72,72)↔(87,87)  (87,72)↔(72,87)
+    X marks (3 dp padding inside each cell, strokeWidth 5):
+      cell (0,0)  29–46 / 29–46  →  arms (32,32)↔(43,43)  (43,32)↔(32,43)
+      cell (1,1)  46–62 / 46–62  →  arms (49,49)↔(59,59)  (59,49)↔(49,59)
+      cell (2,2)  62–79 / 62–79  →  arms (65,65)↔(76,76)  (76,65)↔(65,76)
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
@@ -27,25 +27,25 @@
 
     <!-- Grid dividers — subtle border colour -->
     <path
-        android:pathData="M41,16 L41,92"
+        android:pathData="M46,29 L46,79"
         android:strokeColor="#30363D"
         android:strokeWidth="3"
         android:strokeLineCap="round"
         android:fillColor="#00000000" />
     <path
-        android:pathData="M67,16 L67,92"
+        android:pathData="M62,29 L62,79"
         android:strokeColor="#30363D"
         android:strokeWidth="3"
         android:strokeLineCap="round"
         android:fillColor="#00000000" />
     <path
-        android:pathData="M16,41 L92,41"
+        android:pathData="M29,46 L79,46"
         android:strokeColor="#30363D"
         android:strokeWidth="3"
         android:strokeLineCap="round"
         android:fillColor="#00000000" />
     <path
-        android:pathData="M16,67 L92,67"
+        android:pathData="M29,62 L79,62"
         android:strokeColor="#30363D"
         android:strokeWidth="3"
         android:strokeLineCap="round"
@@ -53,43 +53,43 @@
 
     <!-- X — cell (0,0) top-left -->
     <path
-        android:pathData="M21,21 L36,36"
+        android:pathData="M32,32 L43,43"
         android:strokeColor="#0096C7"
-        android:strokeWidth="6"
+        android:strokeWidth="5"
         android:strokeLineCap="round"
         android:fillColor="#00000000" />
     <path
-        android:pathData="M36,21 L21,36"
+        android:pathData="M43,32 L32,43"
         android:strokeColor="#0096C7"
-        android:strokeWidth="6"
+        android:strokeWidth="5"
         android:strokeLineCap="round"
         android:fillColor="#00000000" />
 
     <!-- X — cell (1,1) centre -->
     <path
-        android:pathData="M46,46 L62,62"
+        android:pathData="M49,49 L59,59"
         android:strokeColor="#0096C7"
-        android:strokeWidth="6"
+        android:strokeWidth="5"
         android:strokeLineCap="round"
         android:fillColor="#00000000" />
     <path
-        android:pathData="M62,46 L46,62"
+        android:pathData="M59,49 L49,59"
         android:strokeColor="#0096C7"
-        android:strokeWidth="6"
+        android:strokeWidth="5"
         android:strokeLineCap="round"
         android:fillColor="#00000000" />
 
     <!-- X — cell (2,2) bottom-right -->
     <path
-        android:pathData="M72,72 L87,87"
+        android:pathData="M65,65 L76,76"
         android:strokeColor="#0096C7"
-        android:strokeWidth="6"
+        android:strokeWidth="5"
         android:strokeLineCap="round"
         android:fillColor="#00000000" />
     <path
-        android:pathData="M87,72 L72,87"
+        android:pathData="M76,65 L65,76"
         android:strokeColor="#0096C7"
-        android:strokeWidth="6"
+        android:strokeWidth="5"
         android:strokeLineCap="round"
         android:fillColor="#00000000" />
 
