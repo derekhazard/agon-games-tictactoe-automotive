@@ -73,7 +73,7 @@ internal class GameActivityTest {
 
         // Draw pattern (alternating X, O):
         //   X | O | X
-        //   X | X | O
+        //   O | X | X
         //   O | X | O
         cells[0][0].performClick() // X
         cells[0][1].performClick() // O
