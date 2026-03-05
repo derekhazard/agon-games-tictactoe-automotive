@@ -124,6 +124,9 @@ scripts/                       # Asset generation scripts (Python)
 
 Play Store graphic assets live in `docs/store-assets/`. To regenerate them:
 
+> **Note:** The commands below assume macOS with Homebrew. On Linux, replace
+> `DYLD_LIBRARY_PATH` with `LD_LIBRARY_PATH` or omit it if cairo is installed system-wide.
+
 ```bash
 pip install -r scripts/requirements.txt
 DYLD_LIBRARY_PATH=/opt/homebrew/lib python scripts/generate_icon.py
