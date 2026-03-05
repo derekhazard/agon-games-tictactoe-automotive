@@ -2,6 +2,7 @@
 """Generate a 1024x500 Play Store feature graphic."""
 
 import io
+import sys
 from pathlib import Path
 
 import cairosvg
@@ -62,7 +63,32 @@ def render_logo() -> Image.Image:
     png_data = cairosvg.svg2png(
         bytestring=svg.encode(), output_width=LOGO_W, output_height=LOGO_H
     )
-    return Image.open(io.BytesIO(png_data)).convert("RGBA")
+    with Image.open(io.BytesIO(png_data)) as img:
+        return img.convert("RGBA")
+
+
+_FONT_CANDIDATES = [
+    # macOS
+    "/System/Library/Fonts/Helvetica.ttc",
+    "/System/Library/Fonts/SFNSText.ttf",
+    # Linux
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+    # Windows
+    "C:/Windows/Fonts/arial.ttf",
+]
+
+
+def _load_font(size: int) -> ImageFont.FreeTypeFont:
+    """Load the first available system font or fail with a clear message."""
+    for path in _FONT_CANDIDATES:
+        try:
+            return ImageFont.truetype(path, size)
+        except OSError:
+            continue
+    print("Error: No suitable TrueType font found.", file=sys.stderr)
+    print("Install DejaVu Sans or pass a .ttf path.", file=sys.stderr)
+    sys.exit(1)
 
 
 def main() -> None:
@@ -76,28 +102,24 @@ def main() -> None:
 
     draw = ImageDraw.Draw(canvas)
 
-    # Try to load a nice font; fall back to default
     title_size = 48
     tagline_size = 24
-    try:
-        title_font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", title_size)
-        tagline_font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", tagline_size)
-    except OSError:
-        title_font = ImageFont.load_default()
-        tagline_font = ImageFont.load_default()
+    title_font = _load_font(title_size)
+    tagline_font = _load_font(tagline_size)
 
     # Title: "Tic-Tac-Toe"
     title = "Tic-Tac-Toe"
     title_y = logo_y + LOGO_H + 40
-    bbox = draw.textbbox((0, 0), title, font=title_font)
-    title_x = (WIDTH - (bbox[2] - bbox[0])) // 2
+    title_bbox = draw.textbbox((0, 0), title, font=title_font)
+    title_x = (WIDTH - (title_bbox[2] - title_bbox[0])) // 2
     draw.text((title_x, title_y), title, fill="#E6EDF3", font=title_font)
 
     # Tagline: "Designed for your car"
     tagline = "Designed for your car"
-    tagline_y = title_y + title_size + 20
-    bbox = draw.textbbox((0, 0), tagline, font=tagline_font)
-    tagline_x = (WIDTH - (bbox[2] - bbox[0])) // 2
+    title_h = title_bbox[3] - title_bbox[1]
+    tagline_y = title_y + title_h + 20
+    tagline_bbox = draw.textbbox((0, 0), tagline, font=tagline_font)
+    tagline_x = (WIDTH - (tagline_bbox[2] - tagline_bbox[0])) // 2
     draw.text((tagline_x, tagline_y), tagline, fill="#8B949E", font=tagline_font)
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)

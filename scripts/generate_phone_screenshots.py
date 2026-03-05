@@ -24,15 +24,23 @@ AAOS_SCREENSHOTS = [
 ]
 
 
+EXPECTED_W, EXPECTED_H = 1024, 768
+
+
 def scale_to_phone(src: Path, dst: Path) -> None:
     """Crop AAOS system bars and center app content on phone canvas."""
-    img = Image.open(src)
-    w, h = img.size
+    with Image.open(src) as img:
+        w, h = img.size
+        if (w, h) != (EXPECTED_W, EXPECTED_H):
+            raise ValueError(
+                f"Unexpected screenshot size for {src.name}: {w}x{h} "
+                f"(expected {EXPECTED_W}x{EXPECTED_H})"
+            )
 
-    # AAOS 1024x768: status bar ~42px, app content ends ~696px, car nav below
-    top_crop = 42
-    bottom_crop = h - 696
-    cropped = img.crop((0, top_crop, w, h - bottom_crop))
+        # AAOS 1024x768: status bar ~42px, app content ends ~696px, car nav below
+        top_crop = 42
+        bottom_crop = h - 696
+        cropped = img.crop((0, top_crop, w, h - bottom_crop))
 
     # Scale to fill phone width
     cw, ch = cropped.size
@@ -45,6 +53,7 @@ def scale_to_phone(src: Path, dst: Path) -> None:
     canvas = Image.new("RGB", (PHONE_W, PHONE_H), BG_COLOR)
     y_offset = (PHONE_H - new_h) // 2
     canvas.paste(scaled, (0, y_offset))
+    dst.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(dst, "PNG")
     print(f"Phone screenshot saved: {dst.name} ({PHONE_W}x{PHONE_H})")
 

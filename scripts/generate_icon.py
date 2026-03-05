@@ -70,7 +70,8 @@ def build_foreground_svg() -> str:
 def render_layer(svg: str) -> Image.Image:
     """Render SVG string to a Pillow RGBA image."""
     png_data = cairosvg.svg2png(bytestring=svg.encode(), output_width=SIZE, output_height=SIZE)
-    return Image.open(io.BytesIO(png_data)).convert("RGBA")
+    with Image.open(io.BytesIO(png_data)) as img:
+        return img.convert("RGBA")
 
 
 def main() -> None:
